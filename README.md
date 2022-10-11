@@ -1,4 +1,6 @@
 # Service booking system using react and json server
 
-npm install
-npm start
+```sh
+  npm install
+  npm start
+```
