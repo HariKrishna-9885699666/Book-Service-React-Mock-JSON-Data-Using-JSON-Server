@@ -1,32 +1,53 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import './styles.scss';
+import {MONTH_NAMES} from '../lib/constants';
+const dayjs = require('dayjs');
+
+const month_name = function(dt) {
+    return MONTH_NAMES[dt.getMonth()];
+};
 
 function GetAvailability() {
+    const [currentDate, setCurrentDate] = useState(null);
+    useEffect(() => {
+        let now = dayjs();
+        let year = now.year();
+        let month = now.month() + 1;
+        let date = now.date();
+        setCurrentDate(`${year}-${month}-${date}`);
+    }, []);
+    const setDate = (dt) => {
+        console.log(MONTH_NAMES.findIndex((item) => {
+            return dt === item
+        }))
+    }
+    
     return (
         <div className="App">
             <header className="App-header">
                 <main className="calendar-contain">
-                <center><h3>Book a service</h3></center>
+                <center><h3 className="serviceTitle">Book a service</h3></center>
                     <section className="title-bar">
-                        <span className="title-bar__year">
-                            Janaury 2023
+                        <span className="title-bar__year serviceTitle">
+                            {month_name(new Date(currentDate))} {dayjs(currentDate).year()}
                         </span>
                         <span >
-                        <select>
+                        <select value={month_name(new Date(currentDate))} onChange={(e) => {
+                            setDate(e.target.value);
+                        }}>
                             <option value=''>--Select Month--</option>
-                            <option selected value='1'>Janaury</option>
-                            <option value='2'>February</option>
-                            <option value='3'>March</option>
-                            <option value='4'>April</option>
-                            <option value='5'>May</option>
-                            <option value='6'>June</option>
-                            <option value='7'>July</option>
-                            <option value='8'>August</option>
-                            <option value='9'>September</option>
-                            <option value='10'>October</option>
-                            <option value='11'>November</option>
-                            <option value='12'>December</option>
-                        </select> 
+                            {MONTH_NAMES.map((option) => (
+                                <option value={option}>{option}</option>
+                            ))}
+                        </select>&nbsp;
+                        <select value={dayjs(currentDate).year()} onChange={(e) => {
+                            setDate(e.target.value);
+                        }}>
+                            <option value=''>--Select Year--</option>
+                            <option value='2022'>2022</option>
+                            <option value='2023'>2023</option>
+                            <option value='2024'>2024</option>
+                        </select>
                         </span>
                     </section>
 

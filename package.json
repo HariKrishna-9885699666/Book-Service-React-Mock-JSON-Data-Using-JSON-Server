@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@faker-js/faker": "^7.5.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -16,7 +17,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"json-server -p 3001 --watch 2023slots.json\" \"react-scripts start\"",
+    "start": "concurrently \"json-server -p 3001 --watch 2022-24slots.json\" \"react-scripts start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -40,7 +41,10 @@
     ]
   },
   "main": "index.js",
-  "keywords": ["reactjs", "json-server"],
+  "keywords": [
+    "reactjs",
+    "json-server"
+  ],
   "author": "Hari Krishna Anem",
   "license": "ISC",
   "devDependencies": {
