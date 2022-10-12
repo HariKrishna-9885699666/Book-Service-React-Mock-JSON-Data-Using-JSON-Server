@@ -1,26 +1,57 @@
 import React, {useState, useEffect} from "react";
 import './styles.scss';
-import {MONTH_NAMES} from '../lib/constants';
+import {MONTH_NAMES, getDay} from '../lib/constants';
 const dayjs = require('dayjs');
 
 const month_name = function(dt) {
     return MONTH_NAMES[dt.getMonth()];
 };
+const getDateObj = (yr, mon, dt) => {
+    let now = dayjs();
+    let year = yr || now.year();
+    let month = mon || now.month() + 1;
+    let date = dt || now.date();
+    return {
+        year,
+        month,
+        date
+    }
+}
+
+const ordinal_suffix_of = (i) => {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return "st";
+    }
+    if (j == 2 && k != 12) {
+        return "nd";
+    }
+    if (j == 3 && k != 13) {
+        return "rd";
+    }
+    return "th";
+}
 
 function GetAvailability() {
     const [currentDate, setCurrentDate] = useState(null);
     useEffect(() => {
-        let now = dayjs();
-        let year = now.year();
-        let month = now.month() + 1;
-        let date = now.date();
+        const {year, month, date} = getDateObj();
         setCurrentDate(`${year}-${month}-${date}`);
     }, []);
-    const setDate = (dt) => {
-        console.log(MONTH_NAMES.findIndex((item) => {
-            return dt === item
-        }))
-    }
+    const setMonth = (mon) => {
+        const selectedMonthIndex = MONTH_NAMES.findIndex((item) => {
+            return mon === item
+        });
+        let month = selectedMonthIndex + 1;
+        const {year, date} = getDateObj(dayjs(currentDate).get('year'), month, dayjs(currentDate).get('date'));
+        setCurrentDate(`${year}-${month}-${date}`);
+    };
+    const setYear = (year) => {
+        const {month, date} = getDateObj(year, dayjs(currentDate).get('month') + 1, dayjs(currentDate).get('date'));
+        setCurrentDate(`${year}-${month}-${date}`);
+    };
+    console.log(dayjs(currentDate).locale)
     
     return (
         <div className="App">
@@ -29,21 +60,19 @@ function GetAvailability() {
                 <center><h3 className="serviceTitle">Book a service</h3></center>
                     <section className="title-bar">
                         <span className="title-bar__year serviceTitle">
-                            {month_name(new Date(currentDate))} {dayjs(currentDate).year()}
+                        {getDay(currentDate)}&nbsp;{dayjs(currentDate).date()}<sup>{ordinal_suffix_of(dayjs(currentDate).date())}</sup>, {month_name(new Date(currentDate))} {dayjs(currentDate).year()}
                         </span>
                         <span >
                         <select value={month_name(new Date(currentDate))} onChange={(e) => {
-                            setDate(e.target.value);
+                            setMonth(e.target.value);
                         }}>
-                            <option value=''>--Select Month--</option>
                             {MONTH_NAMES.map((option) => (
                                 <option value={option}>{option}</option>
                             ))}
                         </select>&nbsp;
                         <select value={dayjs(currentDate).year()} onChange={(e) => {
-                            setDate(e.target.value);
+                            setYear(e.target.value);
                         }}>
-                            <option value=''>--Select Year--</option>
                             <option value='2022'>2022</option>
                             <option value='2023'>2023</option>
                             <option value='2024'>2024</option>
@@ -56,7 +85,7 @@ function GetAvailability() {
                             <span className="sidebar__nav-item"><img className="icon icons8-Up" width="22px" height="22px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAxklEQVRYR+3VwQ2DMAyF4Z8NOkI36AodpZ2sjMAoHaWdoJWlIEXI4RHnwMWROAH2ZxuSiZPXdHJ+EjDagUcZ4Rwd5QjAkr9K4icQQkQBdfK1+BAiAvCShxG9gG3b6xGExtED8Gb+K6VbnNA3cRTQCl4DzNKNOALYC7oFdCMUQFXkAboQCvAGbkDrF2sBasQXuAIfb7NSgAtwB5bGTrcHWBFWhF3uUgC1wyqAen/4NExAdiA7kB3IDmQH5GGjHhg9DVV8eT8Bf2HqNiEP+isaAAAAAElFTkSuQmCC"/></span>
                             <span className="sidebar__nav-item"><img className="icon icons8-Down" width="22px" height="22px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA4UlEQVRYR+2WgQnCMBBFXzdwBSdwBUfRyXQER3EUN1AOEgnxLrkkhYCkUFpI7/+Xf1fajcnHNtmfBTCawDu0sFunuzAYL4CVwEpgJbAS+P8EDsAZeBj/DbUELsAznKpE7WMkxSfgCtwVhRKAmN+AF3AM1x+JGkAUkUINwgKo1X1BagDyYElMA3Cbi7gHoASRAzSZtwBYEClAs3krgAYhQxbnI73XBrbrLdCK0p3m69bbYv79e2cgF9Agms17WpCCdPU830lvAlFHIORw93xvALO33oXRBLw+uw/hsHEUmJ7ABzErNiGyzfJcAAAAAElFTkSuQmCC"/></span>
                         </div>
-                        <h2 className="sidebar__heading">Wednesday<br/>April 6</h2>
+                        <h2 className="sidebar__heading">Slots</h2>
                         <ul className="sidebar__list">
                             <li className="sidebar__list-item sidebar__list-item--complete"><span className="list-item__time">8.30</span> Team Meeting</li>
                             <li className="sidebar__list-item sidebar__list-item--complete"><span className="list-item__time">10.00</span> Lunch with Sasha</li>
@@ -79,12 +108,12 @@ function GetAvailability() {
 
                         <section className="calendar__week">
                             <div className="calendar__day inactive">
-                                <span className="calendar__date">30</span>
-                                <span className="calendar__task">2</span>
+                                {/* <span className="calendar__date">30</span>
+                                <span className="calendar__task">2</span> */}
                             </div>
                             <div className="calendar__day inactive">
-                                <span className="calendar__date">31</span>
-                                <span className="calendar__task">4</span>
+                                {/* <span className="calendar__date">31</span>
+                                <span className="calendar__task">4</span> */}
                             </div>
                             <div className="calendar__day">
                                 <span className="calendar__date">1</span>
@@ -211,24 +240,24 @@ function GetAvailability() {
                                 <span className="calendar__task">1</span>
                             </div>
                             <div className="calendar__day inactive">
-                                <span className="calendar__date">1</span>
-                                <span className="calendar__task">2</span>
+                                {/* <span className="calendar__date">1</span>
+                                <span className="calendar__task">2</span> */}
                             </div>
                             <div className="calendar__day inactive">
-                                <span className="calendar__date">2</span>
-                                <span className="calendar__task">1</span>
+                                {/* <span className="calendar__date">2</span>
+                                <span className="calendar__task">1</span> */}
                             </div>
                             <div className="calendar__day inactive">
-                                <span className="calendar__date">3</span>
-                                <span className="calendar__task">5</span>
+                                {/* <span className="calendar__date">3</span>
+                                <span className="calendar__task">5</span> */}
                             </div>
                             <div className="calendar__day inactive">
-                                <span className="calendar__date">4</span>
-                                <span className="calendar__task">3</span>
+                                {/* <span className="calendar__date">4</span>
+                                <span className="calendar__task">3</span> */}
                             </div>
                             <div className="calendar__day inactive">
-                                <span className="calendar__date">5</span>
-                                <span className="calendar__task">1</span>
+                                {/* <span className="calendar__date">5</span>
+                                <span className="calendar__task">1</span> */}
                             </div>
                         </section>
                     </section>
