@@ -5,18 +5,17 @@ const dayjs = require('dayjs');
 
 function GetAvailability() {
     const [currentDate, setCurrentDate] = useState(null);
-    const [date, setDate] = useState(new Date());
+    const date = new Date();
     const [rows, setRows] = useState([]);
     const [daysInMonth, setDaysInMonth] = useState(new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate());
     const [firstDayOfMonth, setFirstDayOfMonth] = useState(new Date(date.getFullYear(), date.getMonth() , 1).getDay());
     useEffect(() => {
         const {year, month, date} = getDateObj();
         setCurrentDate(`${year}-${month}-${date}`);
-        generateMonthDays(daysInMonth, firstDayOfMonth, setRows);
     }, []);
     useEffect(() => {
         generateMonthDays(daysInMonth, firstDayOfMonth, setRows);
-    }, [currentDate]);
+    }, [currentDate, daysInMonth, firstDayOfMonth]);
     const setMonth = (mon) => {
         const selectedMonthIndex = MONTH_NAMES.findIndex((item) => {
             return mon === item
