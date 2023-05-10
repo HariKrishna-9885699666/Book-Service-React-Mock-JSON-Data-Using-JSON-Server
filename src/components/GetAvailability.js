@@ -16,9 +16,9 @@ function GetAvailability() {
     useEffect(() => {
         generateMonthDays(daysInMonth, firstDayOfMonth, setRows);
     }, [currentDate, daysInMonth, firstDayOfMonth]);
-    const setMonth = (mon) => {
+    const setMonth = (monthName) => {
         const selectedMonthIndex = MONTH_NAMES.findIndex((item) => {
-            return mon === item
+            return monthName === item
         });
         let month = selectedMonthIndex + 1;
         const {year, date} = getDateObj(dayjs(currentDate).get('year'), month, dayjs(currentDate).get('date'));
